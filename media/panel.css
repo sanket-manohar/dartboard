@@ -1,0 +1,193 @@
+:root {
+  --c-high: var(--vscode-testing-iconPassed, #3fb950);
+  --c-medium: var(--vscode-editorWarning-foreground, #c69026);
+  --c-low: var(--vscode-testing-iconFailed, #f14c4c);
+  --c-none: var(--vscode-disabledForeground, #888);
+  --muted: var(--vscode-descriptionForeground);
+  --line: var(--vscode-widget-border, rgba(128, 128, 128, 0.22));
+  --card: var(--vscode-editorWidget-background, rgba(128, 128, 128, 0.06));
+  --row-h: 22px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--vscode-font-family); font-size: var(--vscode-font-size);
+  color: var(--vscode-foreground); background: transparent; user-select: none; overflow-x: hidden;
+}
+button { font: inherit; }
+
+/* ---------- summary ---------- */
+#hero { padding: 10px 12px 8px; }
+#hero:empty { display: none; }
+.hero { display: flex; align-items: center; gap: 12px; cursor: pointer; border-radius: 6px; }
+.ring { width: 56px; height: 56px; flex: none; }
+.ring .track { stroke: var(--line); }
+.ring .value { transition: stroke-dashoffset .4s ease; }
+.hero-main { min-width: 0; flex: 1; }
+.hero-pct { font-size: 22px; font-weight: 650; line-height: 1.1; letter-spacing: -.3px; font-variant-numeric: tabular-nums; }
+.hero-pct small { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-left: 4px; }
+.hero-sub { color: var(--muted); font-size: 11.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+.pill {
+  font-size: 10.5px; line-height: 16px; padding: 0 6px; border-radius: 8px; white-space: nowrap;
+  background: color-mix(in srgb, var(--vscode-foreground) 9%, transparent); color: var(--vscode-foreground);
+}
+.pill.good { background: color-mix(in srgb, var(--c-high) 18%, transparent); }
+.pill.warn { background: color-mix(in srgb, var(--c-medium) 22%, transparent); }
+.pill.bad { background: color-mix(in srgb, var(--c-low) 20%, transparent); }
+.runline {
+  display: flex; align-items: center; gap: 10px; margin-top: 8px; padding: 5px 8px; border-radius: 6px;
+  background: var(--card); border: 1px solid var(--line); font-size: 11.5px; cursor: pointer;
+}
+.runline:hover { border-color: var(--vscode-focusBorder); }
+.runline .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 4px; vertical-align: 1px; }
+.runline .ok .dot { background: var(--c-high); }
+.runline .ko .dot { background: var(--c-low); }
+.runline .ko { color: var(--c-low); font-weight: 600; }
+.runline .skip .dot { background: var(--c-none); }
+.runline .when { margin-left: auto; color: var(--muted); }
+
+/* ---------- tabs ---------- */
+#tabs {
+  display: flex; align-items: stretch; gap: 2px; padding: 0 8px; border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 2; background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+}
+#tabs:empty { display: none; }
+.tab {
+  border: none; background: transparent; color: var(--muted); padding: 6px 7px 5px; cursor: pointer;
+  border-bottom: 2px solid transparent; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap;
+}
+.tab:hover { color: var(--vscode-foreground); }
+.tab.on { color: var(--vscode-foreground); border-bottom-color: var(--vscode-panelTitle-activeBorder, var(--vscode-focusBorder)); }
+.tab:focus-visible { outline: 1px solid var(--vscode-focusBorder); outline-offset: -1px; }
+.badge {
+  min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; font-size: 10px; line-height: 16px; text-align: center;
+  background: var(--vscode-badge-background); color: var(--vscode-badge-foreground);
+}
+.badge.bad { background: var(--c-low); color: #fff; }
+.tabs-spacer { flex: 1; }
+.icon-btn {
+  align-self: center; width: 22px; height: 22px; border: none; border-radius: 4px; background: transparent; cursor: pointer;
+  color: var(--vscode-icon-foreground, currentColor); display: inline-flex; align-items: center; justify-content: center;
+}
+.icon-btn:hover { background: var(--vscode-toolbar-hoverBackground, #5a5d5e50); }
+.icon-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+/* ---------- rows ---------- */
+#list { outline: none; padding: 4px 0 12px; }
+.row {
+  display: flex; align-items: center; height: var(--row-h); line-height: var(--row-h);
+  padding-right: 10px; cursor: pointer; white-space: nowrap; position: relative;
+}
+.row:hover { background: var(--vscode-list-hoverBackground); }
+.row.selected { background: var(--vscode-list-inactiveSelectionBackground); }
+#list:focus .row.selected { background: var(--vscode-list-activeSelectionBackground); color: var(--vscode-list-activeSelectionForeground); outline: 1px solid var(--vscode-list-focusOutline); outline-offset: -1px; }
+.twisty { width: 16px; height: 16px; flex: none; display: inline-flex; align-items: center; justify-content: center; opacity: .85; }
+.twisty svg { width: 10px; height: 10px; transition: transform .1s; fill: currentColor; }
+.row.open > .twisty svg { transform: rotate(90deg); }
+.icon { width: 16px; height: 16px; flex: none; display: inline-flex; align-items: center; justify-content: center; margin-right: 4px; }
+.icon svg { width: 14px; height: 14px; }
+.label { flex: 0 0 auto; max-width: 62%; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.row.bold .label { font-weight: 600; }
+.row.dim .label { opacity: .75; }
+.extra { flex: 0 50 auto; min-width: 0; margin-left: 8px; overflow: hidden; text-overflow: ellipsis; color: var(--muted); font-size: .92em; }
+.chip {
+  flex: none; white-space: nowrap; margin-left: 6px; font-size: 10px; line-height: 15px; padding: 0 5px; border-radius: 7px;
+  background: color-mix(in srgb, var(--vscode-foreground) 10%, transparent);
+}
+.chip.bad { background: color-mix(in srgb, var(--c-low) 22%, transparent); }
+.chip.warn { background: color-mix(in srgb, var(--c-medium) 25%, transparent); }
+.chip.good { background: color-mix(in srgb, var(--c-high) 22%, transparent); }
+.spacer { flex: 1 1 auto; min-width: 8px; }
+.actions { display: none; flex: none; gap: 2px; margin-right: 6px; }
+.row:hover .actions, .row.selected .actions { display: inline-flex; }
+.actions button {
+  width: 20px; height: 20px; padding: 0; border: none; border-radius: 4px; background: transparent;
+  color: var(--vscode-icon-foreground, currentColor); cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+}
+.actions button:hover { background: var(--vscode-toolbar-hoverBackground, #5a5d5e50); }
+.actions svg { width: 12px; height: 12px; fill: currentColor; }
+.pct { flex: none; text-align: right; font-variant-numeric: tabular-nums; min-width: 52px; font-size: .95em; }
+.bar {
+  flex: none; width: 30px; height: 13px; margin-left: 6px; border-radius: 3px; position: relative; overflow: hidden;
+  border: 1.5px solid var(--bar); background: transparent;
+}
+.bar > i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--bar); opacity: .75; }
+.lv-high { --bar: var(--c-high); } .lv-medium { --bar: var(--c-medium); } .lv-low { --bar: var(--c-low); } .lv-none { --bar: var(--c-none); }
+.children { position: relative; }
+.children::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: var(--guide); width: 1px;
+  background: var(--vscode-tree-indentGuidesStroke, #585858); opacity: .6;
+}
+
+/* ---------- tests tab ---------- */
+.section { margin: 10px 12px 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.section .count { font-weight: 500; text-transform: none; letter-spacing: 0; }
+.card {
+  margin: 6px 10px; padding: 8px 10px; border-radius: 6px; background: var(--card); border: 1px solid var(--line);
+  border-left: 3px solid var(--c-low); user-select: text; cursor: default;
+}
+.card-title { font-weight: 600; line-height: 1.35; white-space: normal; word-break: break-word; }
+.card-test { color: var(--muted); font-size: 11.5px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.link { color: var(--vscode-textLink-foreground); cursor: pointer; text-decoration: none; }
+.link:hover { text-decoration: underline; }
+.card .loc { font-size: 11.5px; margin-top: 4px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hint {
+  display: flex; gap: 6px; margin-top: 6px; padding: 5px 7px; border-radius: 4px; font-size: 12px; line-height: 1.4; white-space: normal;
+  background: color-mix(in srgb, var(--vscode-textLink-foreground) 10%, transparent);
+}
+.hint b { flex: none; }
+.kv { margin-top: 6px; font-family: var(--vscode-editor-font-family); font-size: 11.5px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+.kv span { color: var(--muted); display: inline-block; min-width: 62px; }
+.items { margin: 6px 0 0 16px; padding: 0; font-size: 12px; line-height: 1.45; white-space: normal; }
+.card-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.card-actions button {
+  border: none; border-radius: 3px; padding: 2px 8px; cursor: pointer; font-size: 11.5px;
+  background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);
+}
+.card-actions button:hover { background: var(--vscode-button-secondaryHoverBackground, var(--vscode-button-secondaryBackground)); }
+.allgood { margin: 8px 10px; padding: 10px; border-radius: 6px; background: color-mix(in srgb, var(--c-high) 12%, transparent); display: flex; gap: 8px; align-items: center; }
+.allgood svg { width: 18px; height: 18px; flex: none; }
+
+.grid { margin: 4px 10px; overflow-x: auto; }
+.grid table { border-collapse: collapse; width: 100%; font-size: 11.5px; }
+.grid th { font-weight: 500; color: var(--muted); padding: 3px 4px; text-align: center; white-space: nowrap; }
+.grid th:first-child, .grid td:first-child { text-align: left; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.grid td { padding: 3px 4px; text-align: center; border-top: 1px solid var(--line); }
+.cell { display: inline-flex; width: 16px; height: 16px; border-radius: 4px; align-items: center; justify-content: center; font-size: 10px; color: #fff; }
+.cell.passed { background: var(--c-high); }
+.cell.failed { background: var(--c-low); cursor: pointer; }
+.cell.skipped { background: var(--c-none); }
+
+.slow { display: flex; align-items: center; gap: 6px; padding: 2px 12px; height: 22px; cursor: pointer; }
+.slow:hover { background: var(--vscode-list-hoverBackground); }
+.slow .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.slow .delta { font-size: 10.5px; color: var(--muted); }
+.slow .delta.up { color: var(--c-low); }
+.slow .ms { width: 52px; text-align: right; font-variant-numeric: tabular-nums; }
+.slow .meter { width: 40px; height: 6px; border-radius: 3px; background: var(--line); position: relative; overflow: hidden; flex: none; }
+.slow .meter i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--vscode-charts-blue, #3794ff); border-radius: 3px; }
+
+.pyramid { margin: 6px 12px 2px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.pyr { height: 18px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10.5px; color: #fff; white-space: nowrap; min-width: 70px; }
+.pyr.i { background: #8957e5; } .pyr.g { background: #d29922; } .pyr.w { background: #1f6feb; } .pyr.u { background: #238636; }
+.pyr-note { color: var(--muted); font-size: 11px; margin: 4px 12px; white-space: normal; line-height: 1.4; }
+
+.pit { display: flex; align-items: center; gap: 6px; padding: 2px 12px; height: 22px; cursor: pointer; }
+.pit svg { width: 14px; height: 14px; flex: none; }
+.pit:hover { background: var(--vscode-list-hoverBackground); }
+.pit .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---------- empty states ---------- */
+.empty { padding: 14px 16px; line-height: 1.5; color: var(--vscode-foreground); }
+.empty p { margin: 0 0 10px; }
+.empty .muted { color: var(--muted); }
+.empty button {
+  display: block; width: 100%; max-width: 260px; margin: 6px 0; padding: 5px 10px; border: none; border-radius: 2px; cursor: pointer;
+  background: var(--vscode-button-background); color: var(--vscode-button-foreground);
+}
+.empty button.secondary { background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground); }
+.empty a { color: var(--vscode-textLink-foreground); cursor: pointer; }
+
+/* Icons in the list never grow past their row, even without a specific rule. */
+#list svg { max-width: 18px; max-height: 18px; }

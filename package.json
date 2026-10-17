@@ -1,0 +1,881 @@
+{
+  "name": "dartboard",
+  "displayName": "Dartboard: Flutter Test Coverage",
+  "description": "Flutter and Dart testing in one panel: line and branch coverage, which widgets and screens your tests render, Bloc/Cubit/Riverpod/Provider state coverage, readable test failures, screen size and accessibility checks, and a PDF audit report.",
+  "version": "1.0.0",
+  "publisher": "sanket-manohar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sanket-manohar/dartboard.git"
+  },
+  "homepage": "https://github.com/sanket-manohar/dartboard#readme",
+  "bugs": {
+    "url": "https://github.com/sanket-manohar/dartboard/issues"
+  },
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Testing",
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "dartboard",
+    "flutter",
+    "dart",
+    "coverage",
+    "test coverage",
+    "widget test",
+    "branch coverage",
+    "bloc",
+    "riverpod",
+    "accessibility"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "workspaceContains:**/pubspec.yaml",
+    "workspaceContains:**/coverage/lcov.info"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dartboard",
+          "title": "Dartboard",
+          "icon": "media/activity-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "dartboard": [
+        {
+          "id": "dartboard.files",
+          "name": "Coverage",
+          "icon": "media/activity-icon.svg",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "dartboard.run",
+        "title": "Run Tests with Coverage",
+        "category": "Dartboard",
+        "icon": "$(play)"
+      },
+      {
+        "command": "dartboard.refresh",
+        "title": "Reload Coverage Report",
+        "category": "Dartboard",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "dartboard.viewOptions",
+        "title": "Panel Options (Group, Sort, Filters, Goal)",
+        "category": "Dartboard",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "dartboard.openInsights",
+        "title": "Open Insights (Coverage Map, History, Risk)",
+        "category": "Dartboard",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "dartboard.openHistory",
+        "title": "Show Coverage History",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.openRisk",
+        "title": "Show Risk Radar",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.openWalkthrough",
+        "title": "Take the Tour",
+        "category": "Dartboard",
+        "icon": "$(question)"
+      },
+      {
+        "command": "dartboard.runTestsFor",
+        "title": "Run Tests for This with Coverage",
+        "category": "Dartboard",
+        "icon": "$(play)"
+      },
+      {
+        "command": "dartboard.createTest",
+        "title": "Create Test File",
+        "category": "Dartboard",
+        "icon": "$(new-file)"
+      },
+      {
+        "command": "dartboard.checkStrength",
+        "title": "Check Test Strength",
+        "category": "Dartboard",
+        "icon": "$(shield)"
+      },
+      {
+        "command": "dartboard.mapTests",
+        "title": "Map Tests to Lines (Which Test Covers This?)",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.showTestsForLine",
+        "title": "Show Tests Covering This Line",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.share",
+        "title": "Share Coverage (PR Summary / README Badge)",
+        "category": "Dartboard",
+        "icon": "$(share)"
+      },
+      {
+        "command": "dartboard.toggleLive",
+        "title": "Toggle Live Coverage on Save",
+        "category": "Dartboard",
+        "icon": "$(zap)"
+      },
+      {
+        "command": "dartboard.toggleHighlights",
+        "title": "Toggle Line Highlights",
+        "category": "Dartboard",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "dartboard.toggleViewMode",
+        "title": "Switch Grouping (Folders / Flat / Layers)",
+        "category": "Dartboard",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "dartboard.changeSort",
+        "title": "Change Sort Order",
+        "category": "Dartboard",
+        "icon": "$(sort-precedence)"
+      },
+      {
+        "command": "dartboard.nextUncovered",
+        "title": "Go to Next Uncovered Line",
+        "category": "Dartboard",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "dartboard.revealActive",
+        "title": "Reveal Current File in Coverage Panel",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.clear",
+        "title": "Clear Coverage Display",
+        "category": "Dartboard",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "dartboard.resetHistory",
+        "title": "Reset Coverage History",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.openFile",
+        "title": "Open File",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.openAt",
+        "title": "Open At",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.openTest",
+        "title": "Open Test",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.runSingleTest",
+        "title": "Run Test",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.runAffected",
+        "title": "Run Affected Tests (Changed Code Only)",
+        "category": "Dartboard",
+        "icon": "$(zap)"
+      },
+      {
+        "command": "dartboard.auditReport",
+        "title": "Create Audit Report (PDF)",
+        "category": "Dartboard",
+        "icon": "$(file-pdf)"
+      },
+      {
+        "command": "dartboard.runIntegrationTests",
+        "title": "Run Integration Tests on a Device",
+        "category": "Dartboard",
+        "icon": "$(device-mobile)"
+      },
+      {
+        "command": "dartboard.screenMatrix",
+        "title": "Run Widget Test on Screen Sizes and Themes",
+        "category": "Dartboard",
+        "icon": "$(device-mobile)"
+      },
+      {
+        "command": "dartboard.checkAccessibility",
+        "title": "Check Accessibility in This Widget Test",
+        "category": "Dartboard",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "dartboard.filmstrip",
+        "title": "Record Filmstrip of Widget Test",
+        "category": "Dartboard",
+        "icon": "$(device-camera-video)"
+      },
+      {
+        "command": "dartboard.testChecklist",
+        "title": "List Test Cases for This Function",
+        "category": "Dartboard",
+        "icon": "$(checklist)"
+      },
+      {
+        "command": "dartboard.showWidgetTree",
+        "title": "Show Widget Tree Coverage",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.showTab",
+        "title": "Show Panel Tab",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.createWidgetTest",
+        "title": "Create Widget Test",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.rerunTest",
+        "title": "Run Test Again",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.showFailureOutput",
+        "title": "Show Full Test Output",
+        "category": "Dartboard"
+      },
+      {
+        "command": "dartboard.collapseAll",
+        "title": "Collapse All",
+        "category": "Dartboard",
+        "icon": "$(collapse-all)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "dartboard.run",
+          "when": "view == dartboard.files",
+          "group": "navigation@1"
+        },
+        {
+          "command": "dartboard.runAffected",
+          "when": "view == dartboard.files && dartboard.hasCoverage",
+          "group": "navigation@2"
+        },
+        {
+          "command": "dartboard.auditReport",
+          "when": "view == dartboard.files && dartboard.hasCoverage",
+          "group": "navigation@3"
+        },
+        {
+          "command": "dartboard.viewOptions",
+          "when": "view == dartboard.files",
+          "group": "navigation@4"
+        },
+        {
+          "command": "dartboard.runIntegrationTests",
+          "when": "view == dartboard.files && dartboard.hasIntegrationTests",
+          "group": "1_run@1"
+        },
+        {
+          "command": "dartboard.mapTests",
+          "when": "view == dartboard.files && dartboard.hasCoverage",
+          "group": "1_run@2"
+        },
+        {
+          "command": "dartboard.toggleLive",
+          "when": "view == dartboard.files",
+          "group": "1_run@3"
+        },
+        {
+          "command": "dartboard.openInsights",
+          "when": "view == dartboard.files && dartboard.hasCoverage",
+          "group": "2_view@1"
+        },
+        {
+          "command": "dartboard.share",
+          "when": "view == dartboard.files && dartboard.hasCoverage",
+          "group": "2_view@2"
+        },
+        {
+          "command": "dartboard.openWalkthrough",
+          "when": "view == dartboard.files",
+          "group": "2_view@3"
+        },
+        {
+          "command": "dartboard.refresh",
+          "when": "view == dartboard.files",
+          "group": "3_reset@1"
+        },
+        {
+          "command": "dartboard.clear",
+          "when": "view == dartboard.files",
+          "group": "3_reset@2"
+        },
+        {
+          "command": "dartboard.resetHistory",
+          "when": "view == dartboard.files",
+          "group": "3_reset@3"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "dartboard.nextUncovered",
+          "when": "resourceLangId == dart && dartboard.hasCoverage",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "dartboard.runTestsFor",
+          "when": "resourceLangId == dart",
+          "group": "dartboard@1"
+        },
+        {
+          "command": "dartboard.showTestsForLine",
+          "when": "resourceLangId == dart && dartboard.hasCoverage",
+          "group": "dartboard@2"
+        },
+        {
+          "command": "dartboard.checkStrength",
+          "when": "resourceLangId == dart && dartboard.hasCoverage",
+          "group": "dartboard@3"
+        },
+        {
+          "command": "dartboard.createTest",
+          "when": "resourceLangId == dart",
+          "group": "dartboard@4"
+        },
+        {
+          "command": "dartboard.testChecklist",
+          "when": "resourceLangId == dart && resourcePath =~ /[\\\\/]lib[\\\\/]/",
+          "group": "dartboard@5"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "dartboard.runTestsFor",
+          "when": "resourceLangId == dart || explorerResourceIsFolder",
+          "group": "7_dartboard@1"
+        },
+        {
+          "command": "dartboard.createTest",
+          "when": "resourceLangId == dart",
+          "group": "7_dartboard@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "dartboard.openFile",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.openAt",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.openTest",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.runSingleTest",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.showWidgetTree",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.showTab",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.createWidgetTest",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.rerunTest",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.showFailureOutput",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.filmstrip",
+          "when": "false"
+        },
+        {
+          "command": "dartboard.screenMatrix",
+          "when": "resourceFilename =~ /_test\\.dart$/"
+        },
+        {
+          "command": "dartboard.checkAccessibility",
+          "when": "resourceFilename =~ /_test\\.dart$/"
+        },
+        {
+          "command": "dartboard.testChecklist",
+          "when": "resourceLangId == dart"
+        },
+        {
+          "command": "dartboard.runIntegrationTests",
+          "when": "dartboard.hasIntegrationTests"
+        },
+        {
+          "command": "dartboard.collapseAll",
+          "when": "false"
+        }
+      ],
+      "webview/context": [
+        {
+          "command": "dartboard.runTestsFor",
+          "when": "webviewId == 'dartboard.files' && webviewSection =~ /^(file|folder)$/",
+          "group": "1_run@1"
+        },
+        {
+          "command": "dartboard.createTest",
+          "when": "webviewId == 'dartboard.files' && webviewSection =~ /^(file|untested)$/",
+          "group": "1_run@2"
+        },
+        {
+          "command": "dartboard.checkStrength",
+          "when": "webviewId == 'dartboard.files' && webviewSection == file",
+          "group": "1_run@3"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Dartboard",
+      "properties": {
+        "dartboard.lcovGlob": {
+          "type": "string",
+          "default": "**/coverage/lcov.info",
+          "description": "Glob (relative to each workspace folder) used to find lcov reports. Multiple reports (e.g. in a monorepo) are merged."
+        },
+        "dartboard.testCommand": {
+          "type": "string",
+          "default": "flutter test --coverage",
+          "description": "Command run by 'Run Tests with Coverage'. Use 'dart test --coverage=coverage && dart pub global run coverage:format_coverage ...' for pure Dart packages."
+        },
+        "dartboard.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/*.g.dart",
+            "**/*.freezed.dart",
+            "**/*.mocks.dart",
+            "**/*.gr.dart",
+            "**/*.config.dart",
+            "**/generated/**",
+            "**/l10n/**"
+          ],
+          "description": "Glob patterns of files to leave out of the panel, totals and highlights."
+        },
+        "dartboard.lowThreshold": {
+          "type": "number",
+          "default": 50,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Coverage below this percentage is shown in red."
+        },
+        "dartboard.highThreshold": {
+          "type": "number",
+          "default": 80,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Coverage at or above this percentage is shown in green (in between is amber)."
+        },
+        "dartboard.highlightMode": {
+          "type": "string",
+          "enum": [
+            "gutter",
+            "line",
+            "both"
+          ],
+          "default": "both",
+          "enumDescriptions": [
+            "Gutter markers only",
+            "Line background only",
+            "Gutter markers and line background"
+          ],
+          "description": "How covered/uncovered lines are marked in the editor."
+        },
+        "dartboard.showCoveredLines": {
+          "type": "boolean",
+          "default": true,
+          "description": "Highlight covered lines too (uncovered lines are always highlighted when highlights are on)."
+        },
+        "dartboard.highlightOnStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show line highlights automatically when coverage is loaded."
+        },
+        "dartboard.viewMode": {
+          "type": "string",
+          "enum": [
+            "tree",
+            "flat",
+            "layers"
+          ],
+          "default": "tree",
+          "enumDescriptions": [
+            "Grouped by folder, with folder totals",
+            "One flat list",
+            "Grouped by app layer (UI, State, Data, Utils), guessed from names"
+          ],
+          "description": "How the coverage panel groups files."
+        },
+        "dartboard.sortBy": {
+          "type": "string",
+          "enum": [
+            "name",
+            "coverageAsc",
+            "coverageDesc"
+          ],
+          "default": "coverageAsc",
+          "enumDescriptions": [
+            "Alphabetical",
+            "Least covered first",
+            "Most covered first"
+          ],
+          "description": "Sort order of the coverage panel."
+        },
+        "dartboard.goal": {
+          "type": "number",
+          "default": 80,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Your coverage goal in percent, shown as a progress bar in the panel. 0 hides it."
+        },
+        "dartboard.showUntestedFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "List lib/ files that no test imports (flutter test --coverage leaves them out of lcov.info) at 0%."
+        },
+        "dartboard.includeUntestedInTotal": {
+          "type": "boolean",
+          "default": true,
+          "description": "Count untested files in totals, using an estimate of their executable lines. Gives a more honest total."
+        },
+        "dartboard.changedFilesOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Only list files changed on the current git branch (vs main/master), including uncommitted changes. Ignored when git is not available."
+        },
+        "dartboard.liveCoverage": {
+          "type": "boolean",
+          "default": false,
+          "description": "When you save a Dart file, re-run its related test with coverage in the background and update the highlights."
+        },
+        "dartboard.flutterCommand": {
+          "type": "string",
+          "default": "flutter",
+          "description": "The flutter executable used for background runs (single files, live coverage, test strength, test mapping). Use a full path or 'fvm flutter' style wrapper script if flutter is not on PATH."
+        },
+        "dartboard.maxMutations": {
+          "type": "number",
+          "default": 15,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "How many small code changes 'Check Test Strength' tries per file. Each one runs the file's tests once."
+        },
+        "dartboard.branchCoverage": {
+          "type": "boolean",
+          "default": true,
+          "description": "Collect branch coverage (flutter test --branch-coverage) so lines where only one side of an if/else, switch or ?? ran are marked as partly tested."
+        },
+        "dartboard.includeIntegrationCoverage": {
+          "type": "boolean",
+          "default": true,
+          "description": "Merge coverage/integration_lcov.info (written by \"Run Integration Tests on a Device\") into the totals."
+        },
+        "dartboard.codeLens": {
+          "type": "string",
+          "enum": [
+            "all",
+            "uncovered",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Show coverage, widget tree and test tools above functions, build() methods and widget tests.",
+            "Only show lenses for code that is not fully tested.",
+            "Hide all Dartboard lenses."
+          ],
+          "default": "all",
+          "description": "Which Dartboard hints to show above code."
+        },
+        "dartboard.testPitfalls": {
+          "type": "boolean",
+          "default": true,
+          "description": "Warn about common widget test mistakes (missing pump, missing await, no expect, real delays, missing MaterialApp) with one-click fixes."
+        },
+        "dartboard.screenMatrix": {
+          "type": "array",
+          "description": "Screen sizes and themes used by \"Run Widget Test on Screen Sizes and Themes\". Sizes are logical pixels.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "width",
+              "height"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "width": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              },
+              "pixelRatio": {
+                "type": "number",
+                "default": 3
+              },
+              "textScale": {
+                "type": "number",
+                "default": 1
+              },
+              "dark": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          },
+          "default": [
+            {
+              "name": "Small phone",
+              "width": 320,
+              "height": 568,
+              "pixelRatio": 2
+            },
+            {
+              "name": "Phone",
+              "width": 393,
+              "height": 852,
+              "pixelRatio": 3
+            },
+            {
+              "name": "Tablet",
+              "width": 1024,
+              "height": 1366,
+              "pixelRatio": 2
+            },
+            {
+              "name": "Large text",
+              "width": 393,
+              "height": 852,
+              "pixelRatio": 3,
+              "textScale": 2
+            },
+            {
+              "name": "Dark",
+              "width": 393,
+              "height": 852,
+              "pixelRatio": 3,
+              "dark": true
+            }
+          ]
+        }
+      }
+    },
+    "colors": [
+      {
+        "id": "dartboard.coveredLineBackground",
+        "description": "Background of lines hit by tests.",
+        "defaults": {
+          "dark": "#2ea04326",
+          "light": "#2ea04320",
+          "highContrast": "#2ea04340",
+          "highContrastLight": "#2ea04340"
+        }
+      },
+      {
+        "id": "dartboard.uncoveredLineBackground",
+        "description": "Background of lines not hit by tests.",
+        "defaults": {
+          "dark": "#f8514926",
+          "light": "#f8514920",
+          "highContrast": "#f8514940",
+          "highContrastLight": "#f8514940"
+        }
+      },
+      {
+        "id": "dartboard.weakLineBackground",
+        "description": "Background of lines that are covered but where a code change went unnoticed by tests.",
+        "defaults": {
+          "dark": "#d2992233",
+          "light": "#d2992226",
+          "highContrast": "#d2992255",
+          "highContrastLight": "#d2992255"
+        }
+      },
+      {
+        "id": "dartboard.partialLineBackground",
+        "description": "Background of lines where only some branches ran (for example the if ran but the else never did).",
+        "defaults": {
+          "dark": "#d2992226",
+          "light": "#d299221f",
+          "highContrast": "#d2992244",
+          "highContrastLight": "#d2992244"
+        }
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "gettingStarted",
+        "title": "Get started with Dartboard",
+        "description": "See what your tests really cover, down to widgets, screens and states, and fix gaps fast.",
+        "steps": [
+          {
+            "id": "run",
+            "title": "Run your tests with coverage",
+            "description": "Runs `flutter test --coverage` and fills the panel. You can also run tests you already have from a terminal; the panel refreshes on its own.\n[Run Tests with Coverage](command:dartboard.run)",
+            "media": {
+              "markdown": "media/walkthrough/run.md"
+            },
+            "completionEvents": [
+              "onCommand:dartboard.run"
+            ]
+          },
+          {
+            "id": "panel",
+            "title": "Read the panel",
+            "description": "The ring shows your coverage and goal, with the last test run under it. Four tabs: **Files**, **Widgets** (what your tests rendered), **States** (Bloc, Cubit, Riverpod, Provider) and **Tests** (failures explained, slow tests, pyramid).\n[Open the panel](command:dartboard.files.focus)",
+            "media": {
+              "markdown": "media/walkthrough/panel.md"
+            },
+            "completionEvents": [
+              "onView:dartboard.files"
+            ]
+          },
+          {
+            "id": "untested",
+            "title": "Close the gaps",
+            "description": "Files no test imports are listed under **Not tested yet**. Right-click one and choose **Create Test File** to get a ready-made test with a stub for every public class and method.\n[Show the panel](command:dartboard.files.focus)",
+            "media": {
+              "markdown": "media/walkthrough/untested.md"
+            },
+            "completionEvents": [
+              "onCommand:dartboard.createTest"
+            ]
+          },
+          {
+            "id": "run-one",
+            "title": "Run just one file's tests",
+            "description": "Click ▶ next to any file or folder to run only its tests. Turn on **Live coverage** and saving a file does it automatically.\n[Toggle live coverage](command:dartboard.toggleLive)",
+            "media": {
+              "markdown": "media/walkthrough/runone.md"
+            },
+            "completionEvents": [
+              "onCommand:dartboard.runTestsFor",
+              "onCommand:dartboard.toggleLive"
+            ]
+          },
+          {
+            "id": "screens",
+            "title": "Test your screens",
+            "description": "Above each widget test: run it on several screen sizes and themes, check accessibility, or record a filmstrip. Above each function: the test cases you're still missing.\n[Open the panel](command:dartboard.files.focus)",
+            "media": {
+              "markdown": "media/walkthrough/screens.md"
+            },
+            "completionEvents": [
+              "onCommand:dartboard.screenMatrix",
+              "onCommand:dartboard.checkAccessibility",
+              "onCommand:dartboard.filmstrip",
+              "onCommand:dartboard.testChecklist"
+            ]
+          },
+          {
+            "id": "strength",
+            "title": "Check that tests really test",
+            "description": "Green doesn't always mean tested. **Check Test Strength** makes tiny changes to covered code and flags lines where no test failed.\n[Check the open file](command:dartboard.checkStrength)",
+            "media": {
+              "markdown": "media/walkthrough/strength.md"
+            },
+            "completionEvents": [
+              "onCommand:dartboard.checkStrength"
+            ]
+          },
+          {
+            "id": "insights",
+            "title": "See the big picture",
+            "description": "Insights shows a coverage map of your whole project, your coverage history and the risk radar.\n[Open Insights](command:dartboard.openInsights)",
+            "media": {
+              "markdown": "media/walkthrough/insights.md"
+            },
+            "completionEvents": [
+              "onCommand:dartboard.openInsights"
+            ]
+          },
+          {
+            "id": "report",
+            "title": "Share an audit report",
+            "description": "Create a PDF with your grade, what to fix next, and coverage of files, screens and states.\n[Create the report](command:dartboard.auditReport)",
+            "media": {
+              "markdown": "media/walkthrough/report.md"
+            },
+            "completionEvents": [
+              "onCommand:dartboard.auditReport"
+            ]
+          },
+          {
+            "id": "options",
+            "title": "Make it yours",
+            "description": "Group by folders or app layers, show only files changed on your branch, set your goal, share a PR summary or README badge.\n[Open panel options](command:dartboard.viewOptions)",
+            "media": {
+              "markdown": "media/walkthrough/options.md"
+            },
+            "completionEvents": [
+              "onCommand:dartboard.viewOptions"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node --test test/lcov.test.js test/dart.test.js test/features.test.js && node test/mock-check.js",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.0",
+    "@types/vscode": "1.85.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.6.0"
+  },
+  "author": {
+    "name": "Sanket Santosh Vidya Manohar"
+  }
+}
