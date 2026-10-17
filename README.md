@@ -8,8 +8,8 @@
 See what your tests really cover, why they fail, and what to test next.</p>
 
 <p align="center">
-  <a href="https://marketplace.visualstudio.com/items?itemName=sanket-manohar.dartboard"><img src="https://img.shields.io/visual-studio-marketplace/v/sanket-manohar.dartboard?label=VS%20Code&color=0a7bbb" alt="Version"></a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=sanket-manohar.dartboard"><img src="https://img.shields.io/visual-studio-marketplace/i/sanket-manohar.dartboard?color=2ea44f" alt="Installs"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=sanket-manohar.dartboard"><img src="https://img.shields.io/badge/VS%20Code-Marketplace-0a7bbb" alt="VS Code Marketplace"></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=sanket-manohar.dartboard"><img src="https://img.shields.io/badge/version-1.0.0-2ea44f" alt="Version 1.0.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
 </p>
 
