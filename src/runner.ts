@@ -23,7 +23,8 @@ export function branchCoverageEnabled(): boolean {
  * commands, never to custom scripts.
  */
 export function extraTestArgs(resultsFile: string, coverage: boolean): string[] {
-  const args = [`--file-reporter=json:${resultsFile}`];
+  // Forward slashes work on every platform and need no quoting in any shell.
+  const args = [`--file-reporter=json:${resultsFile.split(path.sep).join('/')}`];
   if (coverage && branchCoverageEnabled()) {
     args.push('--branch-coverage');
   }
@@ -107,6 +108,10 @@ export async function runFlutterTask(name: string, args: string[], cwd: string, 
   });
 }
 
+export function windowsQuote(arg: string): string {
+  return /^[\w@%+=:,./\\-]+$/.test(arg) ? arg : `"${arg.replace(/"/g, '""')}"`;
+}
+
 function shellQuote(arg: string): string {
   return /^[\w@%+=:,./-]+$/.test(arg) ? arg : `"${arg.replace(/(["\\$`])/g, '\\$1')}"`;
 }
@@ -137,7 +142,12 @@ export function runFlutter(
     let timedOut = false;
     let cancelled = false;
     let stdout = '';
-    const child = spawn(cmd, args, { cwd, shell: process.platform === 'win32', env: { ...process.env, ...options.env } });
+    const env = { ...process.env, ...options.env };
+    // flutter is a .bat file on Windows, which needs a shell; the shell splits on spaces, so quote each part.
+    const child =
+      process.platform === 'win32'
+        ? spawn([cmd, ...args].map(windowsQuote).join(' '), { cwd, shell: true, env, windowsHide: true })
+        : spawn(cmd, args, { cwd, env });
     if (options.capture) {
       child.stdout?.on('data', (d) => (stdout += d.toString()));
     }

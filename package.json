@@ -2,7 +2,7 @@
   "name": "dartboard",
   "displayName": "Dartboard: Flutter Test Coverage",
   "description": "Flutter and Dart testing in one panel: line and branch coverage, which widgets and screens your tests render, Bloc/Cubit/Riverpod/Provider state coverage, readable test failures, screen size and accessibility checks, and a PDF audit report.",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "publisher": "sanket-manohar",
   "license": "MIT",
   "repository": {

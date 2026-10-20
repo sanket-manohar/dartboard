@@ -292,14 +292,33 @@ export function declaredClasses(src: string): DeclaredClass[] {
   const text = sanitizeDart(src);
   const out: DeclaredClass[] = [];
   const re = /(^|[\s;}])((?:(?:abstract|sealed|base|final|interface|mixin)\s+)*)class\s+([A-Za-z_$][\w$]*)\s*(<[^{]*?>)?\s*(?:extends\s+([A-Za-z_$][\w$.]*)\s*(<[^{]*?>)?)?\s*(?:with\s+([^{]*?))?\s*(?:implements\s+([^{]*?))?\s*\{/g;
+  // Line lookups are done once per file; slicing per class was quadratic on large generated files.
+  const srcLines = src.split('\n');
+  const lineStarts = [0];
+  for (let i = text.indexOf('\n'); i >= 0; i = text.indexOf('\n', i + 1)) {
+    lineStarts.push(i + 1);
+  }
+  const lineOf = (offset: number) => {
+    let lo = 0;
+    let hi = lineStarts.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (lineStarts[mid] <= offset) {
+        lo = mid;
+      } else {
+        hi = mid - 1;
+      }
+    }
+    return lo + 1;
+  };
   let m: RegExpExecArray | null;
   while ((m = re.exec(text))) {
     const start = m.index + m[1].length;
     const brace = m.index + m[0].length - 1;
     const end = matchParen(text, brace);
-    const line = text.slice(0, start).split('\n').length;
-    const endLine = text.slice(0, end).split('\n').length;
-    const before = src.split('\n').slice(Math.max(0, line - 4), line - 1).join('\n');
+    const line = lineOf(start);
+    const endLine = lineOf(end);
+    const before = srcLines.slice(Math.max(0, line - 4), line - 1).join('\n');
     const annotations = [...before.matchAll(/@(\w+)/g)].map((a) => a[1]);
     out.push({
       name: m[3],

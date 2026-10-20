@@ -47,7 +47,7 @@
 
   // ---------------------------------------------------------------- summary
   function renderHero() {
-    if (!state || !state.hasData) { hero.innerHTML = ''; return; }
+    if (!state || !state.hasData || !state.hero) { hero.innerHTML = ''; return; }
     const h = state.hero;
     const r = 23, c = 2 * Math.PI * r;
     const color = 'var(--c-' + h.level + ')';
@@ -131,7 +131,8 @@
   // ---------------------------------------------------------------- tests tab
   function testsHtml(t) {
     let html = '';
-    if (t.failures.length) {
+    if (!t) t = { failures: [], slowest: [], pitfalls: [] };
+    if (t.failures && t.failures.length) {
       html += '<div class="section">Failed <span class="count">' + t.failures.length + '</span></div>';
       for (const c of t.failures) {
         byId.set(c.id, c);
@@ -160,7 +161,7 @@
       });
       html += '</table></div>';
     }
-    if (t.slowest.length) {
+    if (t.slowest && t.slowest.length) {
       html += '<div class="section">Slowest tests</div>';
       t.slowest.forEach((s, i) => {
         byId.set('slow' + i, s);
@@ -187,7 +188,7 @@
         }
       }
     }
-    if (t.pitfalls.length) {
+    if (t.pitfalls && t.pitfalls.length) {
       html += '<div class="section">Test pitfalls <span class="count">' + t.pitfalls.reduce((n, p) => n + p.warnings + p.infos, 0) + '</span></div>';
       t.pitfalls.forEach((p, i) => {
         byId.set('pit' + i, p);
@@ -207,6 +208,15 @@
   }
 
   // ---------------------------------------------------------------- render
+  // A bad row shouldn't leave the panel blank: show what went wrong and keep the Run button.
+  function safeRender() {
+    try {
+      render();
+    } catch (err) {
+      list.innerHTML = '<div class="empty"><p>Dartboard couldn\u2019t draw this tab.</p><p class="muted">' + esc(String(err && err.message || err)) + '</p><button data-cmd="dartboard.run">Run Tests with Coverage</button></div>';
+    }
+  }
+
   function render() {
     byId.clear();
     renderHero();
@@ -255,7 +265,7 @@
     if (!r || !r.collapsible) return;
     open.set(r.id, force === undefined ? !isOpen(r) : force);
     persist();
-    render();
+    safeRender();
   }
 
   function activate(r) {
@@ -268,7 +278,7 @@
     tab = t;
     persist();
     document.scrollingElement.scrollTop = 0;
-    render();
+    safeRender();
   }
 
   // ---------------------------------------------------------------- events
@@ -344,15 +354,15 @@
     const fold = (items) => items.forEach((r) => { if (r.collapsible) open.set(r.id, false); if (r.children) fold(r.children); });
     if (state) ['files', 'widgets', 'states'].forEach((t) => fold(state[t] || []));
     persist();
-    render();
+    safeRender();
   }
 
   window.addEventListener('message', (e) => {
     const m = e.data;
-    if (m.type === 'state') { state = m; render(); if (selected) select(selected); }
+    if (m.type === 'state') { state = m; safeRender(); if (selected) select(selected); }
     else if (m.type === 'children') {
       const parent = byId.get(m.id);
-      if (parent) { parent.children = m.rows; parent.lazy = false; render(); if (selected) select(selected); }
+      if (parent) { parent.children = m.rows; parent.lazy = false; safeRender(); if (selected) select(selected); }
     } else if (m.type === 'collapseAll') {
       collapseAll();
     } else if (m.type === 'tab') {
@@ -364,7 +374,7 @@
       path.slice(0, -1).forEach((r) => open.set(r.id, true));
       open.set(m.id, true);
       persist();
-      render();
+      safeRender();
       select(m.id, true);
     }
   });

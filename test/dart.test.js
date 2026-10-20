@@ -61,3 +61,18 @@ test('uncovered ranges and lcov round trip', () => {
   assert.strictEqual(again.get('lib/a.dart').linesHit, 1);
   assert.strictEqual(again.get('lib/a.dart').linesFound, 2);
 });
+
+test('long doc comments stay fast to scan', () => {
+  const doc = Array.from({ length: 80 }, (_, i) => `/// Line ${i} of a long doc comment about [things] and \`code\`.`).join('\n');
+  const started = Date.now();
+  const result = d.analyzeDart(`${doc}\nvoid f() {\n  print(1);\n}\n`);
+  assert.ok(Date.now() - started < 250, `took ${Date.now() - started} ms`);
+  assert.deepStrictEqual(result.symbols.map((s) => `${s.name}@${s.startLine}`), ['f@81']);
+});
+
+test('Windows line endings give the same results', () => {
+  const src = fs.readFileSync(path.join(__dirname, 'fixture/features/pit_test.dart'), 'utf8').replace(/\r\n/g, '\n');
+  const { findPitfalls } = require('../out/pitfalls');
+  assert.deepStrictEqual(findPitfalls(src.replace(/\n/g, '\r\n')), findPitfalls(src));
+  assert.deepStrictEqual(d.analyzeDart(src.replace(/\n/g, '\r\n')).symbols, d.analyzeDart(src).symbols);
+});

@@ -142,22 +142,42 @@ export class CoveragePanelView implements vscode.WebviewViewProvider, vscode.Dis
       return;
     }
     this.nodes.clear();
+    // Each part is built on its own, so one failure leaves the rest of the panel working.
     const files: Row[] = [];
-    for (const node of await this.tree.getChildren()) {
-      if (node.kind !== 'summary') {
-        files.push(await this.toRow(node));
+    try {
+      for (const node of await this.tree.getChildren()) {
+        if (node.kind !== 'summary') {
+          files.push(await this.toRow(node));
+        }
       }
+    } catch (err) {
+      console.error(`Dartboard could not list files: ${String(err)}`);
     }
-    const snap = this.store.hasData || this.store.packages.length ? await this.project.get() : undefined;
-    const widgets = snap ? this.widgetRows(snap) : [];
-    const states = snap ? this.stateRows(snap) : [];
-    const tests = this.testsTab(snap);
+    // Reading a large project takes a while; show what's ready now and fill in the rest after.
+    const snap = this.project.peek();
+    if (!snap && (this.store.hasData || this.store.packages.length)) {
+      this.project.get().then(
+        () => this.schedulePost(),
+        (err) => console.error(`Dartboard could not read the project: ${String(err)}`),
+      );
+    }
+    const part = <T>(name: string, fn: () => T, fallback: T): T => {
+      try {
+        return fn();
+      } catch (err) {
+        console.error(`Dartboard could not build ${name}: ${String(err)}`);
+        return fallback;
+      }
+    };
+    const widgets = snap ? part('widgets', () => this.widgetRows(snap), []) : [];
+    const states = snap ? part('states', () => this.stateRows(snap), []) : [];
+    const tests = part('tests', () => this.testsTab(snap), undefined);
     void this.view.webview.postMessage({
       type: 'state',
       hasData: this.store.hasData,
       hasPackages: this.store.packages.length > 0,
-      hero: this.hero(),
-      run: this.runLine(),
+      hero: part('summary', () => this.hero(), undefined),
+      run: part('run line', () => this.runLine(), undefined),
       files,
       widgets,
       states,

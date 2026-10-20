@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.2
+
+- If Dartboard can't start, it now says why in a message and in the Dartboard output, instead of commands silently missing.
+
+## 1.0.1
+
+**Fixes**
+- The panel stayed empty and commands stopped responding on larger projects. Reading the project is now about 20 times faster, and the panel shows right away while widgets and states load.
+- One file the scanner can't read no longer blanks the whole panel. It's skipped and the rest still shows.
+- Generated files (`*.g.dart`, `*.freezed.dart`, l10n and others in `dartboard.exclude`) are no longer scanned for screens and states.
+- Windows: running a single test by name, and paths with spaces, now work.
+- Windows: quick fixes on files with Windows line endings insert at the right place.
+
 ## 1.0.0
 
 First release.

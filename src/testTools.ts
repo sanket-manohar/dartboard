@@ -109,7 +109,7 @@ export class TestTools {
         { location: vscode.ProgressLocation.Notification, title: `Running ${label} on ${setups.length} screen setups`, cancellable: true },
         (_p, token) =>
           runFlutter(
-            ['test', rel(pkg, wrapper), `--file-reporter=json:${path.relative(pkg.root, resultsFile)}`, ...(testName ? ['--plain-name', testName] : [])],
+            ['test', rel(pkg, wrapper), `--file-reporter=json:${toPosix(path.relative(pkg.root, resultsFile))}`, ...(testName ? ['--plain-name', testName] : [])],
             pkg.root,
             this.output,
             { token },
@@ -175,7 +175,7 @@ export class TestTools {
     await vscode.window.withProgress(
       { location: vscode.ProgressLocation.Notification, title: `Checking accessibility: ${test.name}`, cancellable: true },
       (_p, token) =>
-        runFlutter(['test', rel(pkg, uri.fsPath), '--plain-name', test.name, `--file-reporter=json:${path.relative(pkg.root, resultsFile)}`], pkg.root, this.output, { token }),
+        runFlutter(['test', rel(pkg, uri.fsPath), '--plain-name', test.name, `--file-reporter=json:${toPosix(path.relative(pkg.root, resultsFile))}`], pkg.root, this.output, { token }),
     );
     const run = this.results.ingest(resultsFile);
     const result = run?.tests.find((t) => t.name.endsWith(test.name));
@@ -217,7 +217,7 @@ export class TestTools {
               testName,
               `--dart-define=DARTBOARD_FILMSTRIP_DIR=${outDir}`,
               ...(roboto ? [`--dart-define=DARTBOARD_ROBOTO=${roboto}`] : []),
-              `--file-reporter=json:${path.relative(pkg.root, resultsFile)}`,
+              `--file-reporter=json:${toPosix(path.relative(pkg.root, resultsFile))}`,
             ],
             pkg.root,
             this.output,
@@ -283,7 +283,7 @@ export class TestTools {
     safeUnlink(resultsFile);
     const code = await runFlutterTask(
       `Integration tests on ${device.name}`,
-      ['test', 'integration_test', '-d', device.id, '--coverage', '--coverage-path=coverage/integration_lcov.info', `--file-reporter=json:${path.relative(pkg.root, resultsFile)}`],
+      ['test', 'integration_test', '-d', device.id, '--coverage', '--coverage-path=coverage/integration_lcov.info', `--file-reporter=json:${toPosix(path.relative(pkg.root, resultsFile))}`],
       pkg.root,
       this.output,
     );

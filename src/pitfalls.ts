@@ -38,7 +38,7 @@ interface Body {
 
 export function findPitfalls(src: string): Pitfall[] {
   const text = sanitizeDart(src);
-  const lines = src.split('\n');
+  const lines = src.split(/\r?\n/);
   const lineStarts = [0];
   for (let i = 0; i < text.length; i++) {
     if (text[i] === '\n') {

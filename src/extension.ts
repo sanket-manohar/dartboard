@@ -24,6 +24,22 @@ const WALKTHROUGH_SHOWN = 'dartboard.walkthroughShown';
 
 export async function activate(context: vscode.ExtensionContext) {
   const output = vscode.window.createOutputChannel('Dartboard');
+  try {
+    return await start(context, output);
+  } catch (err) {
+    // Show startup failures instead of leaving commands silently missing.
+    const detail = err instanceof Error ? err.stack ?? err.message : String(err);
+    output.appendLine(`Dartboard ${context.extension.packageJSON.version} could not start on ${process.platform} (VS Code ${vscode.version}):`);
+    output.appendLine(detail);
+    const show = 'Show details';
+    if ((await vscode.window.showErrorMessage(`Dartboard could not start: ${err instanceof Error ? err.message : String(err)}`, show)) === show) {
+      output.show();
+    }
+    throw err;
+  }
+}
+
+async function start(context: vscode.ExtensionContext, output: vscode.OutputChannel) {
   const history = new History(context.workspaceState);
   const store = new CoverageStore(output, history);
   const tree = new CoverageTreeProvider(store);
@@ -40,8 +56,13 @@ export async function activate(context: vscode.ExtensionContext) {
   const insights = new InsightsPanel(store, vscode.Uri.joinPath(context.extensionUri, 'media', 'icon.png'));
   const config = () => vscode.workspace.getConfiguration('dartboard');
 
+  // Register the panel first so it always appears, even if a later startup step is slow.
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider('dartboard.files', panel, { webviewOptions: { retainContextWhenHidden: true } }),
+  );
+
   await strength.restoreLeftovers();
-  await tools.cleanupLeftovers();
+  tools.cleanupLeftovers().catch((err) => output.appendLine(`Cleanup failed: ${String(err)}`));
 
   // Debounced reload so a burst of watcher events (write + rename) loads once.
   let reloadTimer: NodeJS.Timeout | undefined;
@@ -93,7 +114,6 @@ export async function activate(context: vscode.ExtensionContext) {
     store,
     tree,
     panel,
-    vscode.window.registerWebviewViewProvider('dartboard.files', panel, { webviewOptions: { retainContextWhenHidden: true } }),
     decorator,
     statusBar,
     partial,

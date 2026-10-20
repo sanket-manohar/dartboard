@@ -179,7 +179,7 @@ export function analyzeDart(src: string): DartAnalysis {
     return best;
   };
 
-  const fnRe = /(?:^|\n)([ \t]*)(?:@[\w.]+(?:\([^)\n]*\))?\s+)*((?:static\s+|external\s+|factory\s+|const\s+|late\s+|final\s+)*)((?:[\w$<>?,.\[\] ]+?\s+)?)(get\s+|set\s+)?([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)?)\s*(<[^>(){};=]*>)?\s*(\(|\{|=>)/g;
+  const fnRe = /(?:^|\n)([ \t]*)(?:@[\w.]+(?:\([^)\n]*\))?\s+)*((?:static\s+|external\s+|factory\s+|const\s+|late\s+|final\s+)*)((?:[\w$<>?,.\[\]]+(?:(?<=,)[ \t]+[\w$<>?,.\[\]]+)*\s+)?)(get\s+|set\s+)?([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)?)\s*(<[^>(){};=]*>)?\s*(\(|\{|=>)/g;
   let skipUntil = -1;
   let executableLines = 0;
   const countedLines = new Set<number>();

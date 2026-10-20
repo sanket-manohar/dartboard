@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { CoverageStore, PackageInfo } from './coverageStore';
 import { analyzeDart } from './dart';
+import { globToRegExp, isExcluded } from './lcov';
 import { ImportGraph } from './imports';
 import { findPitfalls, Pitfall } from './pitfalls';
 import { StateHolder, stateCoverage } from './states';
@@ -75,6 +76,11 @@ export class ProjectModel implements vscode.Disposable {
     this.timer = setTimeout(() => this.emitter.fire(), 150);
   }
 
+  /** The snapshot if it's already computed, without waiting. */
+  peek(): ProjectSnapshot | undefined {
+    return this.snapshot;
+  }
+
   async get(): Promise<ProjectSnapshot> {
     if (this.snapshot) {
       return this.snapshot;
@@ -104,7 +110,9 @@ export class ProjectModel implements vscode.Disposable {
   sources(pkg: PackageInfo, kind: 'lib' | 'test' | 'integration'): SourceText[] {
     let rels: string[];
     if (kind === 'lib') {
-      rels = pkg.sourceFiles;
+      // Generated code (*.g.dart, l10n…) isn't screens or state, and can be huge.
+      const exclude = vscode.workspace.getConfiguration('dartboard').get<string[]>('exclude', []).map(globToRegExp);
+      rels = pkg.sourceFiles.filter((r) => !isExcluded(r, exclude));
     } else if (kind === 'test') {
       rels = pkg.testFiles;
     } else {
@@ -147,7 +155,8 @@ export class ProjectModel implements vscode.Disposable {
       const nonWidgets = new Set<string>();
       const widgetClasses = new Map<string, { uri: vscode.Uri; line: number }>();
       for (const f of lib) {
-        for (const c of declaredClasses(f.text)) {
+        await breathe();
+        for (const c of safely(() => declaredClasses(f.text), [], f.uri)) {
           if (c.superclass && /^(StatelessWidget|StatefulWidget|ConsumerWidget|ConsumerStatefulWidget|HookWidget|HookConsumerWidget|StatelessWidget)$/.test(c.superclass)) {
             widgetClasses.set(c.name, { uri: f.uri, line: c.line });
           } else if (!c.superclass || !/Widget|State|Painter|Delegate|Route|Page/.test(c.superclass)) {
@@ -163,7 +172,8 @@ export class ProjectModel implements vscode.Disposable {
         if (!/\bbuild\s*\(/.test(f.text)) {
           continue;
         }
-        const trees = widgetTrees(f.text, this.lineMap(f.uri), nonWidgets);
+        await breathe();
+        const trees = safely(() => widgetTrees(f.text, this.lineMap(f.uri), nonWidgets), [], f.uri);
         if (trees.length) {
           trees.forEach((t) => treesByWidget.set(t.widget, t));
           treesByFile.push({ uri: f.uri, trees });
@@ -174,7 +184,7 @@ export class ProjectModel implements vscode.Disposable {
       const routes: Array<RouteEntry & { uri: vscode.Uri }> = [];
       for (const f of lib) {
         if (/GoRoute|routes\s*:|onGenerateRoute|AutoRoute|PageRoute/.test(f.text)) {
-          findRoutes(f.text).forEach((r) => routes.push({ ...r, uri: f.uri }));
+          safely(() => findRoutes(f.text), [], f.uri).forEach((r) => routes.push({ ...r, uri: f.uri }));
         }
       }
       const screenNames = new Map<string, RouteEntry | undefined>();
@@ -184,7 +194,7 @@ export class ProjectModel implements vscode.Disposable {
         }
       }
       for (const f of lib) {
-        for (const c of declaredClasses(f.text)) {
+        for (const c of safely(() => declaredClasses(f.text), [], f.uri)) {
           if (c.annotations.includes('RoutePage') && !screenNames.has(c.name)) {
             screenNames.set(c.name, undefined);
           }
@@ -237,23 +247,24 @@ export class ProjectModel implements vscode.Disposable {
       const supporting = lib
         .filter((f) => !stateFiles.some((s) => s.path === f.uri.fsPath) && /\bclass\b/.test(f.text) && /(Event|State)\b/.test(f.text))
         .map((f) => ({ path: f.uri.fsPath, text: f.text }));
-      for (const h of stateCoverage([...stateFiles, ...supporting])) {
+      for (const h of safely(() => stateCoverage([...stateFiles, ...supporting]), [], pkg.folder.uri)) {
         snapshot.states.push({ ...h, uri: vscode.Uri.file(h.file), pkg });
       }
 
       // Test pyramid and pitfalls.
       for (const t of tests) {
-        const c = countTests(t.text);
+        await breathe();
+        const c = safely(() => countTests(t.text), { unit: 0, widget: 0, golden: 0 }, t.uri);
         snapshot.pyramid.unit += c.unit;
         snapshot.pyramid.widget += c.widget;
         snapshot.pyramid.golden += c.golden;
-        const items = findPitfalls(t.text);
+        const items = safely(() => findPitfalls(t.text), [], t.uri);
         if (items.length) {
           snapshot.pitfalls.push({ uri: t.uri, rel: t.rel, items });
         }
       }
       for (const t of this.sources(pkg, 'integration')) {
-        const c = countTests(t.text);
+        const c = safely(() => countTests(t.text), { unit: 0, widget: 0, golden: 0 }, t.uri);
         snapshot.pyramid.integration += c.unit + c.widget + c.golden;
       }
     }
@@ -278,6 +289,21 @@ export class ProjectModel implements vscode.Disposable {
       clearTimeout(this.timer);
     }
   }
+}
+
+/** Runs one file's analysis; a file the lightweight parser can't handle is skipped instead of failing every view. */
+function safely<T>(fn: () => T, fallback: T, uri: vscode.Uri): T {
+  try {
+    return fn();
+  } catch (err) {
+    console.error(`Dartboard skipped ${uri.fsPath}: ${String(err)}`);
+    return fallback;
+  }
+}
+
+/** Lets the extension host handle other work between files on large projects. */
+function breathe(): Promise<void> {
+  return new Promise((resolve) => setImmediate(resolve));
 }
 
 function listDart(dir: string): string[] {
